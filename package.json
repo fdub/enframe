@@ -1,0 +1,11 @@
+{
+  "name": "Enframe",
+  "version": "0.1.0",
+  "description": "JavaScript library to put pictures inside pictures of frames",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "fdub",
+  "license": "BSD-2-Clause"
+}
