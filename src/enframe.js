@@ -2,8 +2,8 @@
 
 require.config({
     paths: {
-        jquery: '../node_modules/jquery/dist/jquery.min', 
-        Rx: '../node_modules/rxjs/bundles/Rx.min'
+        jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min', 
+        Rx: 'https://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.min'
     }
 });
 
@@ -36,7 +36,7 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                 }
             } else {
                 image.outer = { width: image.img.width, height: image.img.height };
-                image.initSubscription.unsubscribe();
+                image.initSubscription.dispose();
                 images.push(image);   
                 if (imagesLoading === 0) {
                     callback();
@@ -47,7 +47,7 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             imagesLoading++;
             
             if(image.initSubscription !== undefined) {
-                image.initSubscription.unsubscribe();
+                image.initSubscription.dispose();
             }
             image.initSubscription = Rx.Observable
                 .of(image)
