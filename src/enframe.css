@@ -1,0 +1,15 @@
+body {
+    background-image: url(../frames/background.jpg);
+}
+.enframe-container {
+    box-sizing: border-box;
+    background-clip: border-box;
+    box-shadow: 2px 5px 20px rgba(0, 0, 0, .7);
+    opacity: 0;
+}
+
+.enframe-container div {
+    box-sizing: border-box;
+    background-clip: border-box;
+    box-shadow: inset 1px 1px 10px rgba(0, 0, 0, 1);
+}

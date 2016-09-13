@@ -1,0 +1,9 @@
+{
+  "name": "Enframe",
+  "dependencies": {},
+  "globalDependencies": {
+    "jquery": "registry:dt/jquery#1.10.0+20160908203239",
+    "require": "registry:dt/require#2.1.20+20160316155526",
+    "rx": "registry:dt/rx#0.0.0+20160317120654"
+  }
+}
