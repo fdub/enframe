@@ -57,7 +57,8 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             frame.img.src = frameUrl;
             frame.inner = {
                 width: parseInt(frameUrlSplit[1]),
-                height: parseInt(frameUrlSplit[2]) 
+                height: parseInt(frameUrlSplit[2]),
+                ratio: parseInt(frameUrlSplit[1]) / parseInt(frameUrlSplit[2])
             };
             frame.retries = 5;
             frame.padding = {
@@ -98,10 +99,16 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             .css('background-size', imgWidth + 'px ' + imgHeight + 'px');
     }
 
+    function selectFrame(ratio) {
+        return frames.sort(function(a, b) {
+                return Math.abs(a.ratio - ratio) - Math.abs(b.ratio - ratio);
+            })[0];
+    }
+
     me.wrap = function(selector) {
         $(selector).each(function(_, img) {
             var src = img.src;
-            var frame = frames[Math.floor(frames.length * Math.random())];
+            var frame = selectFrame(img.width / img.height);
             var width = img.width;
             var height = frame.outer.height / frame.outer.width * width; 
 
