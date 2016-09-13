@@ -34,7 +34,6 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                 frame.initSubscription.dispose();
                 frames.push(frame);   
                 if (framesLoading === 0) {
-                    frames.map(function(a) { return a.inner.ratio; }).forEach(console.log);
                     callback();
                 }
             }
@@ -50,11 +49,9 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                     .subscribe(setInitialFrameSizeIfAvailable));
         }
 
-        $(framesSelector).each(function(_, el) {
-            var frameUrl = el.src;
+        function initFrame(frame, frameUrl) {
             var frameUrlSplit = frameUrl.split('_');
-
-            var frame = { img: new Image() };
+            
             frame.img.src = frameUrl;
             frame.inner = {
                 width: parseInt(frameUrlSplit[1]),
@@ -68,16 +65,15 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                 bottom: parseInt(frameUrlSplit[5]),
                 left: parseInt(frameUrlSplit[6])                
             };
-            frame.paddingStyle = function(width, height){
-                return '' + 
-                    frame.padding.top / frame.outer.height * height + 'px ' +
-                    frame.padding.right / frame.outer.width * width + 'px ' +
-                    frame.padding.bottom / frame.outer.height * height + 'px ' +
-                    frame.padding.left / frame.outer.width * width + 'px ';
-            };
             frame.initSubscription = new Rx.SerialDisposable();
 
             subscribeInitialFrameSizeCheck(frame);
+        }
+
+        $(framesSelector).each(function(_, el) {
+            var frameUrl = el.src;
+
+            initFrame({ img: new Image() }, frameUrl);
         });
     };
 
@@ -85,19 +81,23 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
         var $container = $(container);
         width = width || $container.width();
         height = height || $container.height();
+        
         var imgWidth = frame.inner.width / frame.outer.width * width;
         var imgHeight = frame.inner.height / frame.outer.height * height;
         var $div = $container.children().first();
+
         $container
             .addClass('enframe-container')
             .css('width', width)
             .css('height', height)
-            .css('background-size', width + 'px ' + height + 'px')
-            .css('padding', frame.paddingStyle(width, height));
+            .css('background-size', width + 'px ' + height + 'px');
         $div
             .css('width', imgWidth + 'px')
             .css('height', imgHeight + 'px')
-            .css('background-size', imgWidth + 'px ' + imgHeight + 'px');
+            .css('background-size', imgWidth + 'px' + ' ' + imgHeight + 'px')
+            .css('margin-left', frame.padding.left / frame.outer.width * width + 'px')
+            .css('margin-top', frame.padding.top / frame.outer.height * height + 'px');
+        
     }
 
     function selectFrame(ratio) {
@@ -110,9 +110,10 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
         $(selector).each(function(_, img) {
             var src = img.src;
             var frame = selectFrame(img.width / img.height);
+            
             var width = img.width;
             var height = frame.outer.height / frame.outer.width * width; 
-
+            
             var $div = $(img).wrap('<div></div>').parent();
             var $container = $($div).wrap('<div></div>').parent();
 

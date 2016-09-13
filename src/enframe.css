@@ -10,6 +10,7 @@
     background-clip: border-box;
     box-shadow: 2px 5px 20px rgba(0, 0, 0, .7);
     opacity: 0;
+    overflow: hidden;
 }
 
 .enframe-container div {
