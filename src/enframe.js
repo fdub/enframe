@@ -19,15 +19,15 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
         var i;
         var framesLoading = 0;
 
-        function setImageSizeIfAvailable(frame) {
+        function setInitialFrameSizeIfAvailable(frame) {
             framesLoading--;
             
             if (frame.img.height === 0 || frame.img.width === 0) {
                 frame.retries--;
                 if (frame.retries > 0) {
-                    subscribeImageSize(frame);
+                    subscribeInitialFrameSizeCheck(frame);
                 } else {
-                    throw "Image could not be loaded.";
+                    throw 'Image could not be loaded.';
                 }
             } else {
                 frame.outer = { width: frame.img.width, height: frame.img.height };
@@ -38,19 +38,19 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                 }
             }
         }
-        function subscribeImageSize(frame) {
+
+        function subscribeInitialFrameSizeCheck(frame) {
             framesLoading++;
-            
-            if(frame.initSubscription !== undefined) {
-                frame.initSubscription.dispose();
-            }
-            frame.initSubscription = Rx.Observable
-                .of(frame)
-                .delay(20 * (6 - frame.retries) * (6 - frame.retries))
-                .subscribe(setImageSizeIfAvailable);
+
+            frame.initSubscription.setDisposable(
+                Rx.Observable
+                    .of(frame)
+                    .delay(20 * (6 - frame.retries) * (6 - frame.retries))
+                    .subscribe(setInitialFrameSizeIfAvailable));
         }
-        $(framesSelector).each(function(_, frame) {
-            var frameUrl = frame.src;
+
+        $(framesSelector).each(function(_, el) {
+            var frameUrl = el.src;
             var frameUrlSplit = frameUrl.split('_');
 
             var frame = { img: new Image() };
@@ -67,24 +67,36 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                 left: parseInt(frameUrlSplit[6])                
             };
             frame.paddingStyle = function(width, height){
-                return "" + 
-                    frame.padding.top / frame.outer.height * height + "px " +
-                    frame.padding.right / frame.outer.width * width + "px " +
-                    frame.padding.bottom / frame.outer.height * height + "px " +
-                    frame.padding.left / frame.outer.width * width + "px ";
+                return '' + 
+                    frame.padding.top / frame.outer.height * height + 'px ' +
+                    frame.padding.right / frame.outer.width * width + 'px ' +
+                    frame.padding.bottom / frame.outer.height * height + 'px ' +
+                    frame.padding.left / frame.outer.width * width + 'px ';
             };
+            frame.initSubscription = new Rx.SerialDisposable();
 
-            subscribeImageSize(frame);
+            subscribeInitialFrameSizeCheck(frame);
         });
     };
 
-    function copyCssProperty(source, target, propertyName, fallback) {
-        var sourceProp = $(source).css(propertyName);
-        var targetProp = (sourceProp !== undefined) 
-            ? sourceProp
-            : fallback;
-        $(target).css(propertyName, targetProp);
-    } 
+    function setContainerSize(container, frame, width, height) {
+        var $container = $(container);
+        width = width || $container.width();
+        height = height || $container.height();
+        var imgWidth = frame.inner.width / frame.outer.width * width;
+        var imgHeight = frame.inner.height / frame.outer.height * height;
+        var $div = $container.children().first();
+        $container
+            .addClass('enframe-container')
+            .css('width', width)
+            .css('height', height)
+            .css('background-size', width + 'px ' + height + 'px')
+            .css('padding', frame.paddingStyle(width, height));
+        $div
+            .css('width', imgWidth + 'px')
+            .css('height', imgHeight + 'px')
+            .css('background-size', imgWidth + 'px ' + imgHeight + 'px');
+    }
 
     me.wrap = function(selector) {
         $(selector).each(function(_, img) {
@@ -92,25 +104,23 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             var frame = frames[Math.floor(frames.length * Math.random())];
             var width = img.width;
             var height = frame.outer.height / frame.outer.width * width; 
-            var div = $(img).wrap('<div></div>').parent();
-            var container = $(div).wrap('<div></div>').parent();
-            var imgWidth = frame.inner.width / frame.outer.width * width;
-            var imgHeight = frame.inner.height / frame.outer.height * height;
 
-            copyCssProperty(img, container, "width", width);
-            copyCssProperty(img, container, "height", height);
-            container
-                .addClass("enframe-container")
-                .css("background-image", "url(" + frame.img.src + ")")
-                .css("background-size", width + "px " + height + "px")
-                .css("padding", frame.paddingStyle(width, height));
-            div
-                .css("width", imgWidth + "px")
-                .css("height", imgHeight + "px")
-                .css("background-image", "url(" + src + ")")
-                .css("background-size", imgWidth + "px " + imgHeight + "px");
-            div.children().remove();
-            container.animate({opacity: "1"}, 200);
+            var $div = $(img).wrap('<div></div>').parent();
+            var $container = $($div).wrap('<div></div>').parent();
+
+            $container.css('background-image', 'url(' + frame.img.src + ')');
+            $div.css('background-image', 'url(' + src + ')');
+
+            setContainerSize($container[0], frame, width, height);
+            
+            $div.children().remove();
+            $container.animate({opacity: '1'}, 200);
+            
+            window.setTimeout(function() {
+                $container.resize(function() {
+                    setContainerSize($container[0], frame);
+                });
+            }, 500);
         });
     };    
     return me;
