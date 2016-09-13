@@ -1,6 +1,9 @@
-body {
-    background-image: url(../frames/background.jpg);
+.enframe-frame {
+    opacity: 0;
+    width: 0;
+    height: 0;
 }
+
 .enframe-container {
     box-sizing: border-box;
     background-clip: border-box;

@@ -11,91 +11,96 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
     Rx = require('Rx');
     $ = require('jquery');
     var me = {};
-    var imagePaths = []; 
-    var images = [];
+    var frames = [];
     var isInitalized = false;
     var initFailed = false;
 
-    me.init = function(imageUrls, callback, options) {
-        if (!Array.isArray(imageUrls)) {
-            console.error('Argument imagePaths must contain an array of image urls.');
-        }
-        this.imagePaths = imageUrls;
+    me.init = function(framesSelector, callback, options) {
         var i;
-        var imagesLoading = 0;
+        var framesLoading = 0;
 
-        function setImageSizeIfAvailable(image) {
-            imagesLoading--;
+        function setImageSizeIfAvailable(frame) {
+            framesLoading--;
             
-            if (image.img.height === 0 || image.img.width === 0) {
-                image.retries--;
-                if (image.retries > 0) {
-                    subscribeImageSize(image);
+            if (frame.img.height === 0 || frame.img.width === 0) {
+                frame.retries--;
+                if (frame.retries > 0) {
+                    subscribeImageSize(frame);
                 } else {
                     throw "Image could not be loaded.";
                 }
             } else {
-                image.outer = { width: image.img.width, height: image.img.height };
-                image.initSubscription.dispose();
-                images.push(image);   
-                if (imagesLoading === 0) {
+                frame.outer = { width: frame.img.width, height: frame.img.height };
+                frame.initSubscription.dispose();
+                frames.push(frame);   
+                if (framesLoading === 0) {
                     callback();
                 }
             }
         }
-        function subscribeImageSize(image) {
-            imagesLoading++;
+        function subscribeImageSize(frame) {
+            framesLoading++;
             
-            if(image.initSubscription !== undefined) {
-                image.initSubscription.dispose();
+            if(frame.initSubscription !== undefined) {
+                frame.initSubscription.dispose();
             }
-            image.initSubscription = Rx.Observable
-                .of(image)
-                .delay(20 * (6 - image.retries) * (6 - image.retries))
+            frame.initSubscription = Rx.Observable
+                .of(frame)
+                .delay(20 * (6 - frame.retries) * (6 - frame.retries))
                 .subscribe(setImageSizeIfAvailable);
         }
-        $(imageUrls).each(function(_, imageUrl) {
-            var imageUrlSplit = imageUrl.split('_');
+        $(framesSelector).each(function(_, frame) {
+            var frameUrl = frame.src;
+            var frameUrlSplit = frameUrl.split('_');
 
-            var image = { img: new Image() };
-            image.img.src = imageUrl;
-            image.inner = {
-                width: parseInt(imageUrlSplit[1]),
-                height: parseInt(imageUrlSplit[2]) 
+            var frame = { img: new Image() };
+            frame.img.src = frameUrl;
+            frame.inner = {
+                width: parseInt(frameUrlSplit[1]),
+                height: parseInt(frameUrlSplit[2]) 
             };
-            image.retries = 5;
-            image.padding = {
-                top: parseInt(imageUrlSplit[3]),
-                right: parseInt(imageUrlSplit[4]),
-                bottom: parseInt(imageUrlSplit[5]),
-                left: parseInt(imageUrlSplit[6])                
+            frame.retries = 5;
+            frame.padding = {
+                top: parseInt(frameUrlSplit[3]),
+                right: parseInt(frameUrlSplit[4]),
+                bottom: parseInt(frameUrlSplit[5]),
+                left: parseInt(frameUrlSplit[6])                
             };
-            image.paddingStyle = function(width, height){
+            frame.paddingStyle = function(width, height){
                 return "" + 
-                    image.padding.top / image.outer.height * height + "px " +
-                    image.padding.right / image.outer.width * width + "px " +
-                    image.padding.bottom / image.outer.height * height + "px " +
-                    image.padding.left / image.outer.width * width + "px ";
+                    frame.padding.top / frame.outer.height * height + "px " +
+                    frame.padding.right / frame.outer.width * width + "px " +
+                    frame.padding.bottom / frame.outer.height * height + "px " +
+                    frame.padding.left / frame.outer.width * width + "px ";
             };
 
-            subscribeImageSize(image);
+            subscribeImageSize(frame);
         });
     };
+
+    function copyCssProperty(source, target, propertyName, fallback) {
+        var sourceProp = $(source).css(propertyName);
+        var targetProp = (sourceProp !== undefined) 
+            ? sourceProp
+            : fallback;
+        $(target).css(propertyName, targetProp);
+    } 
 
     me.wrap = function(selector) {
         $(selector).each(function(_, img) {
             var src = img.src;
-            var frame = images[Math.floor(images.length * Math.random())];
+            var frame = frames[Math.floor(frames.length * Math.random())];
             var width = img.width;
             var height = frame.outer.height / frame.outer.width * width; 
             var div = $(img).wrap('<div></div>').parent();
             var container = $(div).wrap('<div></div>').parent();
             var imgWidth = frame.inner.width / frame.outer.width * width;
             var imgHeight = frame.inner.height / frame.outer.height * height;
+
+            copyCssProperty(img, container, "width", width);
+            copyCssProperty(img, container, "height", height);
             container
                 .addClass("enframe-container")
-                .css("width", width + "px")
-                .css("height", height + "px")
                 .css("background-image", "url(" + frame.img.src + ")")
                 .css("background-size", width + "px " + height + "px")
                 .css("padding", frame.paddingStyle(width, height));

@@ -4,31 +4,28 @@
     <title>Test</title>
     <link rel="stylesheet" href="enframe.css">
     <style>
+        body {
+            background-image: url(../frames/background.jpg);
+        }
         #img1 {
             width:30%;
+            opacity: 0;
         }
     </style>
 
 </head>
 <body>
-    <img src="../frames/frame_454_325_45_43_52_44.png" style="opacity:0;width:0;height:0;" />
-    <img src="../frames/frame_469_331_69_68_71_72.png" style="opacity:0;width:0;height:0;" />
-    <img src="../frames/frame_535_344_29_37_33_28.png" style="opacity:0;width:0;height:0;" />
-    <img src="../frames/frame_535_345_31_32_30_32.png" style="opacity:0;width:0;height:0;" />
-    <img src="../frames/frame_817_656_32_30_31_35.png" style="opacity:0;width:0;height:0;" />
-    <img src="../frames/frame_975_690_201_204_201_197.png" style="opacity:0;width:0;height:0;" />
-    <img id="img1" src="../media/demo01.jpg" style="opacity:0" />
+    <img class="enframe-frame" src="../frames/frame_454_325_45_43_52_44.png" />
+    <img class="enframe-frame" src="../frames/frame_469_331_69_68_71_72.png" />
+    <img class="enframe-frame" src="../frames/frame_535_344_29_37_33_28.png" />
+    <img class="enframe-frame" src="../frames/frame_535_345_31_32_30_32.png" />
+    <img class="enframe-frame" src="../frames/frame_817_656_32_30_31_35.png" />
+    <img class="enframe-frame" src="../frames/frame_975_690_201_204_201_197.png" />
+    <img id="img1" src="../media/demo01.jpg" />
     <script data-main="enframe" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.1/require.min.js"></script>
     <script>
         require(['enframe'], function(enframe){
-            enframe.init([
-                    '../frames/frame_454_325_45_43_52_44.png',
-                    '../frames/frame_469_331_69_68_71_72.png',
-                    '../frames/frame_535_344_29_37_33_28.png',
-                    '../frames/frame_535_345_31_32_30_32.png',
-                    '../frames/frame_817_656_32_30_31_35.png',
-                    '../frames/frame_975_690_201_204_201_197.png'
-                ], function() { enframe.wrap('#img1'); });
+            enframe.init('.enframe-frame', function() { enframe.wrap('#img1'); });
         });
     </script>
 </body>
