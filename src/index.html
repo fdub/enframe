@@ -7,25 +7,41 @@
         body {
             background-image: url(../frames/background.jpg);
         }
-        #img1 {
-            width:30%;
+        .img {
+            width: 30%;
             opacity: 0;
+            margin: 10px;
         }
     </style>
 
 </head>
 <body>
+    <!-- Preloading frames -->
     <img class="enframe-frame" src="../frames/frame_454_325_45_43_52_44.png" />
     <img class="enframe-frame" src="../frames/frame_469_331_69_68_71_72.png" />
     <img class="enframe-frame" src="../frames/frame_535_344_29_37_33_28.png" />
     <img class="enframe-frame" src="../frames/frame_535_345_31_32_30_32.png" />
     <img class="enframe-frame" src="../frames/frame_817_656_32_30_31_35.png" />
     <img class="enframe-frame" src="../frames/frame_975_690_201_204_201_197.png" />
-    <img id="img1" src="../media/demo01.jpg" />
+    <!-- Preloading frames --> 
+
+    <img class="img" src="../media/demo01.png" />
+    <img class="img" src="../media/demo02.png" />
+    <img class="img" src="../media/demo03.png" />
+    <img class="img" src="../media/demo04.png" />
+    <img class="img" src="../media/demo05.png" />
+    <img class="img" src="../media/demo06.png" />
+    <img class="img" src="../media/demo07.png" />
+    <img class="img" src="../media/demo08.png" />
+    <img class="img" src="../media/demo09.png" />
+    <img class="img" src="../media/demo10.png" />
+    <img class="img" src="../media/demo11.png" />
+    <img class="img" src="../media/demo12.png" />
+
     <script data-main="enframe" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.1/require.min.js"></script>
     <script>
         require(['enframe'], function(enframe){
-            enframe.init('.enframe-frame', function() { enframe.wrap('#img1'); });
+            enframe.init('.enframe-frame', function() { enframe.wrap('.img'); });
         });
     </script>
 </body>
