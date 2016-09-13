@@ -1,8 +1,8 @@
 {
   "resolution": "main",
   "tree": {
-    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/7de6c3dd94feaeb21f20054b9f30d5dabc5efabd/rx/rx.d.ts",
-    "raw": "registry:dt/rx#0.0.0+20160317120654",
-    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/7de6c3dd94feaeb21f20054b9f30d5dabc5efabd/rx/rx.d.ts"
+    "src": "C:\\projects\\web\\enframe\\node_modules\\rx\\ts\\rx.all.d.ts",
+    "raw": "npm:rx/ts/rx.all.d.ts",
+    "typings": "C:\\projects\\web\\enframe\\node_modules\\rx\\ts\\rx.all.d.ts"
   }
 }
