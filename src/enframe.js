@@ -2,7 +2,7 @@
 
 require.config({
     paths: {
-        jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min', 
+        jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery', 
         Rx: 'https://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.min'
     }
 });
@@ -116,11 +116,9 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             $div.children().remove();
             $container.animate({opacity: '1'}, 200);
             
-            window.setTimeout(function() {
-                $container.resize(function() {
-                    setContainerSize($container[0], frame);
-                });
-            }, 500);
+            $container.resize(function() {
+                setContainerSize($container[0], frame);
+            });
         });
     };    
     return me;
