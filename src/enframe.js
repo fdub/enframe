@@ -34,6 +34,7 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                 frame.initSubscription.dispose();
                 frames.push(frame);   
                 if (framesLoading === 0) {
+                    frames.map(function(a) { return a.inner.ratio; }).forEach(console.log);
                     callback();
                 }
             }
@@ -101,7 +102,7 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
 
     function selectFrame(ratio) {
         return frames.sort(function(a, b) {
-                return Math.abs(a.ratio - ratio) - Math.abs(b.ratio - ratio);
+                return Math.abs(a.inner.ratio - ratio) - Math.abs(b.inner.ratio - ratio);
             })[0];
     }
 
