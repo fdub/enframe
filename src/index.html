@@ -6,6 +6,7 @@
     <style>
         body {
             background-image: url(../frames/background.jpg);
+            background-size: 50%;
         }
         .img {
             width: 30%;
@@ -17,37 +18,28 @@
 </head>
 <body>
     <!-- Preloading frames -->
-    <img class="enframe-frame" src="../frames/frame_454_325_45_43_52_44.png" />
-    <img class="enframe-frame" src="../frames/frame_469_331_69_68_71_72.png" />
-    <img class="enframe-frame" src="../frames/frame_535_344_29_37_33_28.png" />
-    <img class="enframe-frame" src="../frames/frame_535_345_31_32_30_32.png" />
-    <img class="enframe-frame" src="../frames/frame_817_656_32_30_31_35.png" />
-    <img class="enframe-frame" src="../frames/frame_975_690_201_204_201_197.png" />
-    <img class="enframe-frame" src="../frames/frame_325_454_44_45_43_52.png" />
-    <img class="enframe-frame" src="../frames/frame_331_469_72_69_68_71.png" />
-    <img class="enframe-frame" src="../frames/frame_344_535_28_29_37_33.png" />
-    <img class="enframe-frame" src="../frames/frame_345_535_32_31_32_30.png" />
-    <img class="enframe-frame" src="../frames/frame_656_817_35_32_30_31.png" />
-    <img class="enframe-frame" src="../frames/frame_690_975_197_201_204_201.png" />
+    <img class="nf-frame" src="../frames/frame_45_43_52_44.png" />
+    <img class="nf-frame" src="../frames/frame_68_68_70_72.png" />
+    <img class="nf-frame" src="../frames/frame_29_37_33_28.png" />
+    <img class="nf-frame" src="../frames/frame_30_32_30_32.png" />
+    <img class="nf-frame" src="../frames/frame_32_30_31_35.png" />
+    <img class="nf-frame" src="../frames/frame_201_204_201_197.png" />
+    <img class="nf-frame" src="../frames/frame_44_45_43_52.png" />
+    <img class="nf-frame" src="../frames/frame_72_69_68_71.png" />
+    <img class="nf-frame" src="../frames/frame_28_29_37_33.png" />
+    <img class="nf-frame" src="../frames/frame_32_31_32_30.png" />
+    <img class="nf-frame" src="../frames/frame_35_32_30_31.png" />
+    <img class="nf-frame" src="../frames/frame_197_201_204_201.png" />
     <!-- Preloading frames --> 
 
-    <img class="img" src="../media/demo01.png" />
-    <img class="img" src="../media/demo02.png" />
-    <img class="img" src="../media/demo03.png" />
-    <img class="img" src="../media/demo04.png" />
-    <img class="img" src="../media/demo05.png" />
-    <img class="img" src="../media/demo06.png" />
-    <img class="img" src="../media/demo07.png" />
-    <img class="img" src="../media/demo08.png" />
-    <img class="img" src="../media/demo09.png" />
-    <img class="img" src="../media/demo10.png" />
-    <img class="img" src="../media/demo11.png" />
-    <img class="img" src="../media/demo12.png" />
+    <img class="img" src="../media/demo90.png" />
+    <img class="img" src="../media/demo91.png" />
+    <img class="img" src="../media/demo92.png" />
 
-    <script data-main="enframe" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.1/require.min.js"></script>
+    <script data-main="enframe" src="../lib/require.min.js"></script>
     <script>
         require(['enframe'], function(enframe){
-            enframe.init('.enframe-frame', function() { enframe.wrap('.img'); });
+            enframe.init('.nf-frame', function() { enframe.wrap('.img'); });
         });
     </script>
 </body>

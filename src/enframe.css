@@ -1,20 +1,30 @@
-.enframe-frame {
+.nf-frame {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
-.enframe-container {
+.nf-container {
     display: inline-block;
-    box-sizing: border-box;
-    background-clip: border-box;
     box-shadow: 2px 5px 20px rgba(0, 0, 0, .7);
     opacity: 0;
     overflow: hidden;
+    background: #000;
+    position: relative;
 }
 
-.enframe-container div {
+.nf-container .nf-image {
+    position: absolute;
     box-sizing: border-box;
-    background-clip: border-box;
+    background-repeat: no-repeat;
+    background-origin: content-box;
+    background-clip: content-box;
+    width: 100%;
+    height: 100%; 
+    background-size: 100% 100%;
+}
+.nf-container .nf-shadow {
+    position: absolute;
+    box-sizing: border-box;
     box-shadow: inset 1px 1px 10px rgba(0, 0, 0, 1);
 }

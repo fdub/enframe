@@ -2,8 +2,8 @@
 
 require.config({
     paths: {
-        jquery: 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery', 
-        Rx: 'https://cdnjs.cloudflare.com/ajax/libs/rxjs/4.1.0/rx.all.min'
+        jquery: '../lib/jquery.min', 
+        Rx: '../lib/rx.all.min'
     }
 });
 
@@ -14,6 +14,16 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
     var frames = [];
     var isInitalized = false;
     var initFailed = false;
+
+    String.prototype.format = String.prototype.f = function() {
+        var s = this,
+            i = arguments.length;
+
+        while (i--) {
+            s = s.replace(new RegExp('\\{' + i + '\\}', 'gm'), arguments[i]);
+        }
+        return s;
+    };
 
     me.init = function(framesSelector, callback, options) {
         var i;
@@ -30,7 +40,16 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                     throw 'Image could not be loaded.';
                 }
             } else {
-                frame.outer = { width: frame.img.width, height: frame.img.height };
+                frame.outer = { 
+                    width: frame.img.width,
+                    height: frame.img.height 
+                };
+                frame.inner = {
+                    width: frame.outer.width - frame.padding.left - frame.padding.right,
+                    height: frame.outer.height - frame.padding.top - frame.padding.bottom
+                };
+                frame.inner.ratio = frame.inner.width / frame.inner.height;
+
                 frame.initSubscription.dispose();
                 frames.push(frame);   
                 if (framesLoading === 0) {
@@ -53,17 +72,12 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             var frameUrlSplit = frameUrl.split('_');
             
             frame.img.src = frameUrl;
-            frame.inner = {
-                width: parseInt(frameUrlSplit[1]),
-                height: parseInt(frameUrlSplit[2]),
-                ratio: parseInt(frameUrlSplit[1]) / parseInt(frameUrlSplit[2])
-            };
             frame.retries = 5;
             frame.padding = {
-                top: parseInt(frameUrlSplit[3]),
-                right: parseInt(frameUrlSplit[4]),
-                bottom: parseInt(frameUrlSplit[5]),
-                left: parseInt(frameUrlSplit[6])                
+                top: parseInt(frameUrlSplit[1]),
+                right: parseInt(frameUrlSplit[2]),
+                bottom: parseInt(frameUrlSplit[3]),
+                left: parseInt(frameUrlSplit[4])                
             };
             frame.initSubscription = new Rx.SerialDisposable();
 
@@ -81,26 +95,30 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
         var $container = $(container);
         width = width || $container.width();
         height = height || $container.height();
-        
-        var imgWidth = frame.inner.width / frame.outer.width * width;
-        var imgHeight = frame.inner.height / frame.outer.height * height;
-        var $div = $container.children().first();
+
+        var left = frame.padding.left / frame.outer.width * 100;
+        var top = frame.padding.top / frame.outer.height * 100;
+        var right = frame.padding.right / frame.outer.width * 100;
+        var bottom = frame.padding.bottom / frame.outer.height * 100;
 
         $container
-            .addClass('enframe-container')
             .css('width', width)
-            .css('height', height)
-            .css('background-size', width + 'px ' + height + 'px');
-        $div
-            .css('width', imgWidth + 'px')
-            .css('height', imgHeight + 'px')
-            .css('background-size', imgWidth + 'px' + ' ' + imgHeight + 'px')
-            .css('margin-left', frame.padding.left / frame.outer.width * width + 'px')
-            .css('margin-top', frame.padding.top / frame.outer.height * height + 'px');
-        
+            .css('height', height);
+
+        $container.find('.nf-image').first()
+            .css('left', left + '%')
+            .css('top', top + '%')
+            .css('width', 100 - right - left + '%')
+            .css('height', 100 - top - bottom + '%');
+        $container.find('.nf-shadow')
+            .css('left', left + '%')
+            .css('top', top + '%')
+            .css('width', 100 - right - left + '%')
+            .css('height', 100 - top - bottom + '%');
     }
 
     function selectFrame(ratio) {
+        ratio += Math.random() * 0.1 - 0.05;
         return frames.sort(function(a, b) {
                 return Math.abs(a.inner.ratio - ratio) - Math.abs(b.inner.ratio - ratio);
             })[0];
@@ -108,26 +126,29 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
 
     me.wrap = function(selector) {
         $(selector).each(function(_, img) {
-            var src = img.src;
-            var frame = selectFrame(img.width / img.height);
+            var src = $(img)[0].src || $(img).find('img')[0].src;
+            var frame = selectFrame(img.clientWidth / img.clientHeight);
             
-            var width = img.width;
-            var height = frame.outer.height / frame.outer.width * width; 
+            var width = img.clientWidth;
+            var widthExt = width + frame.padding.left + frame.padding.right;
+            var height = (img.clientHeight + frame.padding.top + frame.padding.bottom) * width / widthExt; //frame.outer.height / frame.outer.width * width; 
             
-            var $div = $(img).wrap('<div></div>').parent();
-            var $container = $($div).wrap('<div></div>').parent();
+            var $container = $(img)
+                .wrap('<div></div>')
+                .parent()
+                .append('<div class="nf-image"></div>')
+                .append('<div class="nf-image"></div>')
+                .append('<div class="nf-shadow"></div>')
+                .addClass('nf-container');
 
-            $container.css('background-image', 'url(' + frame.img.src + ')');
-            $div.css('background-image', 'url(' + src + ')');
+            $container.find('.nf-image').first().css('background-image', 'url(' + src + ')');
+            $container.find('.nf-image').last().css('background-image', 'url(' + frame.img.src + ')');
 
             setContainerSize($container[0], frame, width, height);
             
-            $div.children().remove();
-            $container.animate({opacity: '1'}, 200);
-            
-            $container.resize(function() {
-                setContainerSize($container[0], frame);
-            });
+            $container.find(img).find('img').remove();
+            $container.find(img).detach().appendTo($container.find('.nf-shadow'));
+            $container.animate({opacity: '1'}, 100);
         });
     };    
     return me;
