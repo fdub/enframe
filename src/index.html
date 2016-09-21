@@ -18,18 +18,20 @@
 </head>
 <body>
     <!-- Preloading frames -->
-    <img class="nf-frame" src="../frames/frame_45_43_52_44.png" />
-    <img class="nf-frame" src="../frames/frame_68_68_70_72.png" />
-    <img class="nf-frame" src="../frames/frame_29_37_33_28.png" />
-    <img class="nf-frame" src="../frames/frame_30_32_30_32.png" />
-    <img class="nf-frame" src="../frames/frame_32_30_31_35.png" />
-    <img class="nf-frame" src="../frames/frame_201_204_201_197.png" />
-    <img class="nf-frame" src="../frames/frame_44_45_43_52.png" />
-    <img class="nf-frame" src="../frames/frame_72_69_68_71.png" />
-    <img class="nf-frame" src="../frames/frame_28_29_37_33.png" />
-    <img class="nf-frame" src="../frames/frame_32_31_32_30.png" />
-    <img class="nf-frame" src="../frames/frame_35_32_30_31.png" />
-    <img class="nf-frame" src="../frames/frame_197_201_204_201.png" />
+
+    <img class="nf-frame" src="../frames/frame_1092_1376_197_201_204_201.png" /> 
+    <img class="nf-frame" src="../frames/frame_1376_1092_201_204_201_197.png" /> 
+    <img class="nf-frame" src="../frames/frame_406_600_28_29_37_33.png" /> 
+    <img class="nf-frame" src="../frames/frame_600_406_29_37_33_28.png" /> 
+    <img class="nf-frame" src="../frames/frame_599_406_30_32_30_32.png" /> 
+    <img class="nf-frame" src="../frames/frame_882_719_32_30_31_35.png" /> 
+    <img class="nf-frame" src="../frames/frame_406_599_32_31_32_30.png" /> 
+    <img class="nf-frame" src="../frames/frame_719_882_35_32_30_31.png" /> 
+    <img class="nf-frame" src="../frames/frame_422_541_44_45_43_52.png" /> 
+    <img class="nf-frame" src="../frames/frame_541_422_45_43_52_44.png" /> 
+    <img class="nf-frame" src="../frames/frame_609_471_68_68_70_72.png" /> 
+    <img class="nf-frame" src="../frames/frame_471_609_72_69_68_71.png" /> 
+
     <!-- Preloading frames --> 
 
     <img class="img" src="../media/demo90.png" />
@@ -39,7 +41,8 @@
     <script data-main="enframe" src="../lib/require.min.js"></script>
     <script>
         require(['enframe'], function(enframe){
-            enframe.init('.nf-frame', function() { enframe.wrap('.img'); });
+            enframe.init('.nf-frame');
+            enframe.wrap('.img', function() { /* callback */ });
         });
     </script>
 </body>
