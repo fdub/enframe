@@ -129,9 +129,12 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             var src = $(img)[0].src || $(img).find('img')[0].src;
             var frame = selectFrame(img.clientWidth / img.clientHeight);
             
+            var imgFactor = img.clientWidth / frame.inner.width; 
+
             var width = img.clientWidth;
-            var widthExt = width + frame.padding.left + frame.padding.right;
-            var height = (img.clientHeight + frame.padding.top + frame.padding.bottom) * width / widthExt; //frame.outer.height / frame.outer.width * width; 
+            var innerWidth = width * frame.inner.width / frame.outer.width;
+            var innerHeight = innerWidth * img.clientHeight / img.clientWidth;
+            var height = innerHeight * frame.outer.height / frame.inner.height;
             
             var $container = $(img)
                 .wrap('<div></div>')
@@ -146,8 +149,13 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
 
             setContainerSize($container[0], frame, width, height);
             
-            $container.find(img).find('img').remove();
-            $container.find(img).detach().appendTo($container.find('.nf-shadow'));
+            if ($container.find(img).is('img')) {
+                $container.find(img).remove();
+            } else {
+                $container.find(img).find('img').remove();
+                $container.find(img).detach().appendTo($container.find('.nf-shadow'));
+            }
+
             $container.animate({opacity: '1'}, 100);
         });
     };    
