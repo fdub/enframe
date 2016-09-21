@@ -1,12 +1,5 @@
 /// <reference path="../typings/index.d.ts"/>
 
-require.config({
-    paths: {
-        jquery: '../lib/jquery.min', 
-        Rx: '../lib/rx.all.min'
-    }
-});
-
 define('enframe', ['require', 'Rx', 'jquery'], function(require) {
     Rx = require('Rx');
     $ = require('jquery');
