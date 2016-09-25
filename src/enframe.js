@@ -107,6 +107,13 @@ define('enframe', ['require', 'jquery'], function(require) {
             })[0];
     }
 
+    function wrap(img) {
+        var container = document.createElement('div');
+        img.parentNode.insertBefore(container, img);
+        container.appendChild(img);
+        return container;
+    }
+
     me.wrapOne = function(img, callback) {
         var src = img.getAttribute('src') || img.querySelector('img').getAttribute('src');
         var frame = selectFrame(img.clientWidth / img.clientHeight);
@@ -116,9 +123,7 @@ define('enframe', ['require', 'jquery'], function(require) {
         var innerHeight = innerWidth * img.clientHeight / img.clientWidth;
         var height = innerHeight * frame.outer.height / frame.inner.height;
         
-        var $container = $(img)
-            .wrap('<div></div>')
-            .parent()
+        var $container = $(wrap(img))
             .append('<div class="nf-image"></div>')
             .append('<div class="nf-image"></div>')
             .append('<div class="nf-shadow"></div>')
