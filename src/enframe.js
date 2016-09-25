@@ -119,6 +119,17 @@ define('enframe', ['require', 'jquery'], function(require) {
             el.className += ' ' + className;
         }
     }
+    function appendDiv(target, className) {
+        var div = document.createElement('div');
+        addClass(div, className);
+        target.insertBefore(div, undefined);
+        return div;
+    }
+    function is(node, selector) {
+        var nodes = (node.parentNode || node.document).querySelectorAll(selector), i = -1;
+        while (nodes[++i] && nodes[i] != node);
+        return !!nodes[i];
+    }
 
     me.wrapOne = function(img, callback) {
         var src = img.getAttribute('src') || img.querySelector('img').getAttribute('src');
@@ -130,32 +141,27 @@ define('enframe', ['require', 'jquery'], function(require) {
         var height = innerHeight * frame.outer.height / frame.inner.height;
         
         var container = wrap(img);
-        var imageNode1 = document.createElement('div');
-        addClass(imageNode1, 'nf-image');
-        container.insertBefore(imageNode1, undefined);
-        var imageNode2 = document.createElement('div');
-        addClass(imageNode2, 'nf-image');
-        container.insertBefore(imageNode2, undefined);
-        var shadowNode = document.createElement('div');
-        addClass(shadowNode, 'nf-shadow');
-        container.insertBefore(shadowNode, undefined);
+        var imageNode1 = appendDiv(container, 'nf-image');
+        var imageNode2 = appendDiv(container, 'nf-image');
+        var shadowNode = appendDiv(container, 'nf-shadow');
+        
         addClass(container, 'nf-container');
 
         imageNode1.style.backgroundImage = 'url(' + src + ')';
         imageNode2.style.backgroundImage = 'url(' + frame.img.src + ')';
 
         setContainerSize(container, frame, width, height);
-        
-        var $container = $(container);
-        if ($container.find(img).is('img')) {
-            $container.find(img).remove();
+
+
+        if (is(img, 'img')) {
+            img.remove();
         } else {
-            $container.find(img).find('img').remove();
-            $container.find(img).detach().appendTo($(shadowNode));
+            img.querySelector('img').remove();
+            shadowNode.appendChild(img);
         }
 
         var show = function() {
-            addClass($container[0], 'nf-visible');
+            addClass(container, 'nf-visible');
             (callback || emptyCallback)();
         };
         if (frame.isInitialized) {
