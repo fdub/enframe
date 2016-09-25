@@ -74,30 +74,28 @@ define('enframe', ['require', 'jquery'], function(require) {
     };
 
     function setContainerSize(container, frame, width, height) {
-        var $container = $(container);
-        width = width || $container.width();
-        height = height || $container.height();
+        width = width || container.clientWidth;
+        height = height || container.clientHeight;
 
         var left = frame.padding.left / frame.outer.width * 100;
         var top = frame.padding.top / frame.outer.height * 100;
         var right = frame.padding.right / frame.outer.width * 100;
         var bottom = frame.padding.bottom / frame.outer.height * 100;
 
-        $container
-            .css('width', width)
-            .css('height', height);
+        container.style.width = width + 'px';
+        container.style.height = height + 'px';
 
-        $container.find('.nf-image').first()
-            .css('left', left + '%')
-            .css('top', top + '%')
-            .css('width', 100 - right - left + '%')
-            .css('height', 100 - top - bottom + '%');
+        var image = container.querySelector('.nf-image');   
+        image.style.left = left + '%';
+        image.style.top = top + '%';
+        image.style.width = 100 - right - left + '%';
+        image.style.height = 100 - top - bottom + '%';
 
-        $container.find('.nf-shadow')
-            .css('left', left + '%')
-            .css('top', top + '%')
-            .css('width', 100 - right - left + '%')
-            .css('height', 100 - top - bottom + '%');
+        var shadow = container.querySelector('.nf-shadow');
+        shadow.style.left = left + '%';
+        shadow.style.top = top + '%';
+        shadow.style.width = 100 - right - left + '%';
+        shadow.style.height = 100 - top - bottom + '%';
     }
 
     function selectFrame(ratio) {
@@ -114,6 +112,14 @@ define('enframe', ['require', 'jquery'], function(require) {
         return container;
     }
 
+    function addClass(el, className) {
+        if (el.classList !== undefined){
+            el.classList.add(className);
+        } else {
+            el.className += ' ' + className;
+        }
+    }
+
     me.wrapOne = function(img, callback) {
         var src = img.getAttribute('src') || img.querySelector('img').getAttribute('src');
         var frame = selectFrame(img.clientWidth / img.clientHeight);
@@ -123,26 +129,33 @@ define('enframe', ['require', 'jquery'], function(require) {
         var innerHeight = innerWidth * img.clientHeight / img.clientWidth;
         var height = innerHeight * frame.outer.height / frame.inner.height;
         
-        var $container = $(wrap(img))
-            .append('<div class="nf-image"></div>')
-            .append('<div class="nf-image"></div>')
-            .append('<div class="nf-shadow"></div>')
-            .addClass('nf-container');
+        var container = wrap(img);
+        var imageNode1 = document.createElement('div');
+        addClass(imageNode1, 'nf-image');
+        container.insertBefore(imageNode1, undefined);
+        var imageNode2 = document.createElement('div');
+        addClass(imageNode2, 'nf-image');
+        container.insertBefore(imageNode2, undefined);
+        var shadowNode = document.createElement('div');
+        addClass(shadowNode, 'nf-shadow');
+        container.insertBefore(shadowNode, undefined);
+        addClass(container, 'nf-container');
 
-        $container.find('.nf-image').first().css('background-image', 'url(' + src + ')');
-        $container.find('.nf-image').last().css('background-image', 'url(' + frame.img.src + ')');
+        imageNode1.style.backgroundImage = 'url(' + src + ')';
+        imageNode2.style.backgroundImage = 'url(' + frame.img.src + ')';
 
-        setContainerSize($container[0], frame, width, height);
+        setContainerSize(container, frame, width, height);
         
+        var $container = $(container);
         if ($container.find(img).is('img')) {
             $container.find(img).remove();
         } else {
             $container.find(img).find('img').remove();
-            $container.find(img).detach().appendTo($container.find('.nf-shadow'));
+            $container.find(img).detach().appendTo($(shadowNode));
         }
 
         var show = function() {
-            $container.addClass('nf-visible');
+            addClass($container[0], 'nf-visible');
             (callback || emptyCallback)();
         };
         if (frame.isInitialized) {
