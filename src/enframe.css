@@ -11,6 +11,7 @@
     overflow: hidden;
     background: #000;
     position: relative;
+    transition: opacity 500ms;
 }
 
 .nf-container .nf-image {
@@ -23,8 +24,13 @@
     height: 100%; 
     background-size: 100% 100%;
 }
+
 .nf-container .nf-shadow {
     position: absolute;
     box-sizing: border-box;
     box-shadow: inset 1px 1px 10px rgba(0, 0, 0, 1);
+}
+
+.nf-visible {
+    opacity: 1;
 }

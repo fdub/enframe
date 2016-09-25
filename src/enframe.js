@@ -144,7 +144,7 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
         }
 
         var show = function() {
-            $container.animate({opacity: '1'}, 100);
+            $container.addClass('nf-visible');
             (callback || emptyCallback)();
         };
         if (frame.isInitialized) {
