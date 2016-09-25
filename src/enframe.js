@@ -1,7 +1,6 @@
 /// <reference path="../typings/index.d.ts"/>
 
-define('enframe', ['require', 'Rx', 'jquery'], function(require) {
-    Rx = require('Rx');
+define('enframe', ['require', 'jquery'], function(require) {
     $ = require('jquery');
     var emptyCallback = function() { };
     var me = {};
@@ -9,7 +8,7 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
 
     me.init = function(framesSelector) {
         var initFrame;
-        var subscribeInit;
+        var scheduleInit;
         var finishOrRetryInit;
 
         initFrame = function(frame, frameUrl) {
@@ -37,31 +36,25 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
             frame.inner.ratio = frame.inner.width / frame.inner.height;
 
             frame.isInitialized = false;
-            frame.initSubscription = new Rx.SerialDisposable();
             frame.onInitalized = [];
 
-            subscribeInit(frame);
+            scheduleInit(frame);
             return frame;
         };
 
-        subscribeInit = function(frame) {
-            frame.initSubscription.setDisposable(
-                Rx.Observable
-                    .of(frame)
-                    .delay(20 * (6 - frame.retries) * (6 - frame.retries))
-                    .subscribe(finishOrRetryInit));
+        scheduleInit = function(frame) {
+            window.setTimeout(function() { finishOrRetryInit(frame); }, 20 * (6 - frame.retries) * (6 - frame.retries));
         };
 
         finishOrRetryInit = function(frame) {
             if (frame.img.height === 0 || frame.img.width === 0) {
                 frame.retries--;
                 if (frame.retries > 0) {
-                    subscribeInit(frame);
+                    scheduleInit(frame);
                 } else {
                     throw 'Image could not be loaded.';
                 }
             } else {
-                frame.initSubscription.dispose();
                 frame.isInitialized = true;
 
                 $(frame.onInitalized).each(function(_, fn) {
@@ -70,7 +63,7 @@ define('enframe', ['require', 'Rx', 'jquery'], function(require) {
                 frame.onInitalized = [];
             }
         };
-
+        
         $(framesSelector).each(function(_, el) {
             var frameUrl = el.src;
 
