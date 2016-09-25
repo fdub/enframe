@@ -108,7 +108,7 @@ define('enframe', ['require', 'jquery'], function(require) {
     }
 
     me.wrapOne = function(img, callback) {
-        var src = $(img)[0].src || $(img).find('img')[0].src;
+        var src = img.getAttribute('src') || img.querySelector('img').getAttribute('src');
         var frame = selectFrame(img.clientWidth / img.clientHeight);
         
         var width = img.clientWidth;
