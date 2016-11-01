@@ -125,6 +125,16 @@ define('enframe', ['require', 'jquery'], function(require) {
         target.insertBefore(div, undefined);
         return div;
     }
+    function appendImg(target, src, alt, title) {
+        var img = document.createElement('img');
+        img.setAttribute('src', src);
+        img.setAttribute('alt', alt);
+        img.setAttribute('title', title);
+        img.style.width = '100%';
+        img.style.height = '100%';
+        target.insertBefore(img, undefined);
+        return img;
+    }
     function is(node, selector) {
         var nodes = (node.parentNode || node.document).querySelectorAll(selector), i = -1;
         while (nodes[++i] && nodes[i] != node);
@@ -133,6 +143,8 @@ define('enframe', ['require', 'jquery'], function(require) {
 
     me.wrapOne = function(img, callback) {
         var src = img.getAttribute('src') || img.querySelector('img').getAttribute('src');
+        var title = img.getAttribute('title') || img.querySelector('img').getAttribute('title');
+        var alt = img.getAttribute('alt') || img.querySelector('img').getAttribute('alt');
         var frame = selectFrame(img.clientWidth / img.clientHeight);
         
         var width = img.clientWidth;
@@ -147,7 +159,7 @@ define('enframe', ['require', 'jquery'], function(require) {
         
         addClass(container, 'nf-container');
 
-        imageNode1.style.backgroundImage = 'url(' + src + ')';
+        appendImg(imageNode1, src, alt, title);
         imageNode2.style.backgroundImage = 'url(' + frame.img.src + ')';
 
         setContainerSize(container, frame, width, height);
